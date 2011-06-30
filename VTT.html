@@ -36,7 +36,7 @@
 			}
 			
 			
-			#info {
+			.info {
 				width:250px;
 				background-color: gray;
 			}
@@ -61,30 +61,9 @@
 				//$('table[name="field"] .cell').addClass("fieldCell");
 				/////////////////////////////
 				// token
-				$("#token").append(tr);
-				for(i=0; i < 5; i++)
-				{
-					$("#token tr").append(td);
-				}
+				var t = new Token(20,20);
+				$("#tokens").append(t.GetToken());
 				
-				$("#token tr td").append(cell);
-				$("#token .cell").draggable({snap : ".cell", snapMode : "inner"});
-				$("#token .cell").addClass('bggray');
-				$("#token .cell").mouseover(function() {
-					if (!$(this).hasClass( "ui-draggable-dragging" )) {
-						var offset = $(this).offset();
-						$("#info").show();
-						$("#info").offset({ top: offset.top, left: offset.left + 25});
-					}
-					//
-				});
-				$("#token .cell").mouseout(function() {
-					$("#info").hide();
-				});
-				$("#token .cell").mousedown(function() {
-					$("#info").hide();
-				});
-				$("#info").hide();
 				
 				//////////////////////////////////////
 				//tabs
@@ -127,6 +106,41 @@
 				
 				this.Constructor(width, height);
 			}
+			
+			function Token(width, height)
+			{
+				var token = $("<div class='cell'>&nbsp;</div>");
+				var info = $("<div class='info'>info</div>");
+				token.append(info);
+				
+				this.Constructor = function (w, h) {
+					token.addClass('bggray');
+					token.draggable({snap : ".cell", snapMode : "inner"});
+					token.mouseover(function() {
+						if (!$(this).hasClass( "ui-draggable-dragging" )) {
+							var offset = $(this).offset();
+							info.show();
+							info.offset({ top: offset.top, left: offset.left + 25});
+						}
+					});
+					
+					token.mouseout(function() {
+						info.hide();
+					});
+					
+					token.mousedown(function() {
+						info.hide();
+					});
+					
+					info.hide();
+				}
+				
+				
+				this.GetToken = function () {
+					return token;
+				}
+				this.Constructor(width, height);
+			}
 		</script>
 	</head>
 	<body>
@@ -140,9 +154,9 @@
 				<table id="field" class="field" name="field" border=1>
 					
 				</table>
-				<table id="token" class="token">
+				<div id="tokens">
 					
-				</table>
+				</div>
 				
 			</div>
 			<div id="tabs-2">
@@ -154,10 +168,6 @@
 			<div id="tabs-3">
 				<p>Tab 3</p>
 			</div>
-		</div>
-		
-		<div id='info'>
-		Info
 		</div>
 	</body>
 </html>
