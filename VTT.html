@@ -57,6 +57,7 @@
 				//var nbr = 3*12;
 				/// Creation du battle field
 				var field = new BattleField(2 , 2);
+				$("#fieldtab1").append(field.GetField());
 				
 				//$('table[name="field"] .cell').addClass("fieldCell");
 				/////////////////////////////
@@ -68,42 +69,92 @@
 				//////////////////////////////////////
 				//tabs
 				$( "#tabs" ).tabs();
-				
+				$( "#tabs" ).bind( "tabsshow", function(event, ui) {
+					if (ui.index == 1) {
+						field.SetEditor(true);
+						$("#fieldtab2").append($("#fieldtab1 table"));
+					}
+					else if (ui.index == 0) {
+						$("#fieldtab1").append($("#fieldtab2 table"));
+					}
+					else
+						field.SetEditor(false);
+				});
 				// Colorpicker
-				$('#colorpicker').ColorPicker({flat: true});
+				$('#colorpicker').ColorPicker({flat: true ,
+									onSubmit: function(hsb, hex, rgb, el) {
+										field.SetEditorColor('#' + hex);
+									}
+				});
 				
 			});
 			
 			function BattleField(width, height)
 			{
+				var isEditor = false;
+				var editorColor = "#FFFFFF";
+				var isEditorMode = false;
+				var table = $("<table class='field' border=1></table>");
 				this.Constructor = function(w, h) {
 					var tr = "<tr/>";
 					var td = "<td/>";
 					var cell = "<div class='cell'></div>";
-					var cellPix = "<div class='cellPix'>&nbsp;</div>";
+					var cellPix = "<div class='cellPix'></div>";
+					
 					for(i=0; i < h; i++)
 					{
-						$('table[name="field"]').append(tr);
+						table.append(tr);
 					}
 					for(i=0; i < w; i++)
 					{
-						$('table[name="field"] tr').append(td);
+						table.find('tr').append(td);
 					}
 					
 					var fieldCell = $(cell);
 					for(i=0; i < 100; i++)
 					{
 						var c = $(cellPix);
-						if (i%2 == 0)
-							c.addClass("bggreen");
-						else
-							c.addClass("bgred");
+						c.addClass("bggreen");
 						fieldCell.append(c);
 					}
-					$('table[name="field"] tr td').append(fieldCell.clone());
+					table.find('tr td').append(fieldCell.clone());
 					fieldCell.remove();
+					
+					table.find('.cellPix').bind('mouseover', OnMouseOver);
+					table.find('.cellPix').bind('click', OnClick);
 				};
 				
+				this.SetEditor = function(bool)
+				{
+					isEditor = bool;
+				}
+				
+				this.GetEditor = function(bool)
+				{
+					return isEditor;
+				}
+				
+				this.SetEditorColor = function(scolor)
+				{
+					editorColor = scolor;
+				}
+				
+				var OnClick = function () {
+					if (isEditor)
+						isEditorMode = !isEditorMode;
+				}
+				
+				var OnMouseOver = function () {
+					if (isEditorMode)
+					{
+						$(this).removeClass("bggreen");
+						$(this).css("background-color", editorColor);
+					}
+				}
+				
+				this.GetField = function() {
+					return table;
+				}
 				this.Constructor(width, height);
 			}
 			
@@ -151,16 +202,17 @@
 				<li><a href="#tabs-3">Save</a></li>
 			</ul>
 			<div id="tabs-1">
-				<table id="field" class="field" name="field" border=1>
+				<div id="fieldtab1">
 					
-				</table>
+				</div>
+				
 				<div id="tokens">
 					
 				</div>
 				
 			</div>
 			<div id="tabs-2">
-				<div id="fieldEditor">
+				<div id="fieldtab2">
 					
 				</div>
 				<p id="colorpicker"></p>
