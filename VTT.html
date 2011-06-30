@@ -51,34 +51,13 @@
 		<script type="text/javascript" src="js/colorpicker.js"></script>
 		<script type="text/javascript">
 			$(function(){
-				//var nbr = 3*12;
-				/// Creation du battle field
-				var nbr = 2;
 				var tr = "<tr/>";
 				var td = "<td/>";
 				var cell = "<div class='cell'></div>";
-				var cellPix = "<div class='cellPix'>&nbsp;</div>";
-				for(i=0; i < nbr; i++)
-				{
-					$('table[name="field"]').append(tr);
-				}
-				for(i=0; i < nbr; i++)
-				{
-					$('table[name="field"] tr').append(td);
-				}
+				//var nbr = 3*12;
+				/// Creation du battle field
+				var field = new BattleField(2 , 2);
 				
-				var fieldCell = $(cell);
-				for(i=0; i < 100; i++)
-				{
-					var c = $(cellPix);
-					if (i%2 == 0)
-						c.addClass("bggreen");
-					else
-						c.addClass("bgred");
-					fieldCell.append(c);
-				}
-				$('table[name="field"] tr td').append(fieldCell.clone());
-				fieldCell.remove();
 				//$('table[name="field"] .cell').addClass("fieldCell");
 				/////////////////////////////
 				// token
@@ -115,6 +94,39 @@
 				$('#colorpicker').ColorPicker({flat: true});
 				
 			});
+			
+			function BattleField(width, height)
+			{
+				this.Constructor = function(w, h) {
+					var tr = "<tr/>";
+					var td = "<td/>";
+					var cell = "<div class='cell'></div>";
+					var cellPix = "<div class='cellPix'>&nbsp;</div>";
+					for(i=0; i < h; i++)
+					{
+						$('table[name="field"]').append(tr);
+					}
+					for(i=0; i < w; i++)
+					{
+						$('table[name="field"] tr').append(td);
+					}
+					
+					var fieldCell = $(cell);
+					for(i=0; i < 100; i++)
+					{
+						var c = $(cellPix);
+						if (i%2 == 0)
+							c.addClass("bggreen");
+						else
+							c.addClass("bgred");
+						fieldCell.append(c);
+					}
+					$('table[name="field"] tr td').append(fieldCell.clone());
+					fieldCell.remove();
+				};
+				
+				this.Constructor(width, height);
+			}
 		</script>
 	</head>
 	<body>
