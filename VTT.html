@@ -89,12 +89,14 @@
 				
 			});
 			
-			function BattleField(width, height)
+			function BattleField(w, h)
 			{
 				var isEditor = false;
 				var editorColor = "#FFFFFF";
 				var isEditorMode = false;
 				var table = $("<table class='field' border=1></table>");
+				var width = w;
+				var height = h;
 				this.Constructor = function(w, h) {
 					var tr = "<tr/>";
 					var td = "<td/>";
@@ -110,15 +112,22 @@
 						table.find('tr').append(td);
 					}
 					
-					var fieldCell = $(cell);
-					for(i=0; i < 100; i++)
-					{
-						var c = $(cellPix);
-						c.addClass("bggreen");
-						fieldCell.append(c);
-					}
-					table.find('tr td').append(fieldCell.clone());
-					fieldCell.remove();
+					table.find('tr td').each(function(index) {
+						var fieldCell = $(cell);
+						for(i=0; i < 10; i++)
+						{
+							for(j=0; j < 10; j++)
+							{
+								var c = $(cellPix);
+								var x = (index%width) * 10 + j;
+								var y = Math.floor(index/width) * 10 + i;
+								c.attr('id', 'cell_' + x + '_' + y);
+								c.css("background-color", "green");;
+								fieldCell.append(c);
+							}
+						}
+						$(this).append(fieldCell);
+					});
 					
 					table.find('.cellPix').bind('mouseover', OnMouseOver);
 					table.find('.cellPix').bind('click', OnClick);
@@ -147,7 +156,6 @@
 				var OnMouseOver = function () {
 					if (isEditorMode)
 					{
-						$(this).removeClass("bggreen");
 						$(this).css("background-color", editorColor);
 					}
 				}
