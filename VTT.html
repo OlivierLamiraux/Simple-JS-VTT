@@ -10,9 +10,11 @@
 			border-collapse: separate;
 			border-spacing: 0px;
 			padding: 0px;
+			border: 2px solid black;
 			}
 			table.field td {
 			padding: 0px;
+			border: 1px solid black;
 			}
 			
 			table.token {
@@ -56,7 +58,7 @@
 				var cell = "<div class='cell'></div>";
 				//var nbr = 3*12;
 				/// Creation du battle field
-				var field = new BattleField(2 , 2);
+				var field = new BattleField(5 , 5);
 				$("#fieldtab1").append(field.GetField());
 				
 				//$('table[name="field"] .cell').addClass("fieldCell");
@@ -94,7 +96,7 @@
 				var isEditor = false;
 				var editorColor = "#FFFFFF";
 				var isEditorMode = false;
-				var table = $("<table class='field' border=1></table>");
+				var table = $("<table class='field'></table>");
 				var width = w;
 				var height = h;
 				this.Constructor = function(w, h) {
@@ -121,6 +123,8 @@
 								var c = $(cellPix);
 								var x = (index%width) * 10 + j;
 								var y = Math.floor(index/width) * 10 + i;
+								c.data("x", x);
+								c.data("y", y);
 								c.attr('id', 'cell_' + x + '_' + y);
 								c.css("background-color", "green");;
 								fieldCell.append(c);
@@ -151,12 +155,24 @@
 				var OnClick = function () {
 					if (isEditor)
 						isEditorMode = !isEditorMode;
+					
+					if (isEditorMode) {
+						table.find("td").css("border", "1px solid red");
+					}
+					else {
+						table.find("td").css("border", "1px solid black");
+					}
 				}
 				
 				var OnMouseOver = function () {
 					if (isEditorMode)
-					{
+					{	
+						var x = $(this).data("x");
+						var y = $(this).data("y");
 						$(this).css("background-color", editorColor);
+						table.find("#cell_" + (x+1) + "_" + y).css("background-color", editorColor);;
+						table.find("#cell_" + (x+1) + "_" + (y+1)).css("background-color", editorColor);;
+						table.find("#cell_" + x + "_" + (y+1)).css("background-color", editorColor);;
 					}
 				}
 				
