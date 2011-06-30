@@ -25,6 +25,12 @@
 			height:20px;
 			}
 			
+			.cellPix {
+			width:2px;
+			height:2px;
+			float: left;
+			}
+			
 			.fieldCell {
 			background-color: green; 
 			}
@@ -48,9 +54,10 @@
 				//var nbr = 3*12;
 				/// Creation du battle field
 				var nbr = 2;
-				var tr = "<tr></tr>";
-				var td = "<td></td>";
-				var cell = "<div class='cell'>&nbsp;</div>";
+				var tr = "<tr/>";
+				var td = "<td/>";
+				var cell = "<div class='cell'></div>";
+				var cellPix = "<div class='cellPix'>&nbsp;</div>";
 				for(i=0; i < nbr; i++)
 				{
 					$('table[name="field"]').append(tr);
@@ -59,8 +66,20 @@
 				{
 					$('table[name="field"] tr').append(td);
 				}
-				$('table[name="field"] tr td').append(cell);
-				$('table[name="field"] .cell').addClass("fieldCell");
+				
+				var fieldCell = $(cell);
+				for(i=0; i < 100; i++)
+				{
+					var c = $(cellPix);
+					if (i%2 == 0)
+						c.addClass("bggreen");
+					else
+						c.addClass("bgred");
+					fieldCell.append(c);
+				}
+				$('table[name="field"] tr td').append(fieldCell.clone());
+				fieldCell.remove();
+				//$('table[name="field"] .cell').addClass("fieldCell");
 				/////////////////////////////
 				// token
 				$("#token").append(tr);
@@ -71,7 +90,7 @@
 				
 				$("#token tr td").append(cell);
 				$("#token .cell").draggable({snap : ".cell", snapMode : "inner"});
-				$("#token .cell").addClass('bggreen');
+				$("#token .cell").addClass('bggray');
 				$("#token .cell").mouseover(function() {
 					if (!$(this).hasClass( "ui-draggable-dragging" )) {
 						var offset = $(this).offset();
@@ -106,7 +125,7 @@
 				<li><a href="#tabs-3">Save</a></li>
 			</ul>
 			<div id="tabs-1">
-				<table id="field" class="field" name="field">
+				<table id="field" class="field" name="field" border=1>
 					
 				</table>
 				<table id="token" class="token">
@@ -115,9 +134,9 @@
 				
 			</div>
 			<div id="tabs-2">
-				<table id="fieldEditor" class="field" name="field">
+				<div id="fieldEditor">
 					
-				</table>
+				</div>
 				<p id="colorpicker"></p>
 			</div>
 			<div id="tabs-3">
