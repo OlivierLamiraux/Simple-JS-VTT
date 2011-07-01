@@ -1,184 +1,314 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<link rel="stylesheet" href="css/colorpicker.css" type="text/css" />
-    <link rel="stylesheet" media="screen" type="text/css" href="css/layout.css" />
-    <title>ColorPicker - jQuery plugin</title>
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/colorpicker.js"></script>
-    <script type="text/javascript" src="js/eye.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
-    <script type="text/javascript" src="js/layout.js?ver=1.0.2"></script>
-</head>
-<body>
-    <div class="wrapper">
-        <h1>Color Picker - jQuery plugin</h1>
-        <ul class="navigationTabs">
-            <li><a href="#about" rel="about">About</a></li>
-            <li><a href="#download" rel="download">Download</a></li>
-            <li><a href="#implement" rel="implement">Implement</a></li>
-        </ul>
-        <div class="tabsContent">
-            <div class="tab">
-                <h2>About</h2>
-                <p>A simple component to select color in the same way you select color in Adobe Photoshop</p>
-				<h3>Last update</h3>
-				<p>23.05.2009 - Check Download tab</p>
-                <h3>Features</h3>
-                <ul>
-                    <li>Flat mode - as element in page</li>
-                    <li>Powerful controls for color selection</li>
-					<li>Easy to customize the look by changing some images</li>
-					<li>Fits into the viewport</li>
-                </ul>
-				<h3>License</h3>
-				<p>Dual licensed under the MIT and GPL licenses.</p>
-                <h3>Examples</h3>
-                <p>Flat mode.</p>
-                <p id="colorpickerHolder">
-                </p>
-                <pre>
-$('#colorpickerHolder').ColorPicker({flat: true});
-                </pre>
-                <p>Custom skin and using flat mode to display the color picker in a custom widget.</p>
-				<div id="customWidget">
-					<div id="colorSelector2"><div style="background-color: #00ff00"></div></div>
-	                <div id="colorpickerHolder2">
-	                </div>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>jQuery UI Example Page</title>
+		<link type="text/css" href="css/smoothness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/colorpicker.css" type="text/css" />		
+		<style type="text/css">
+			table.field {
+			border-collapse: separate;
+			border-spacing: 0px;
+			padding: 0px;
+			border: 2px solid black;
+			}
+			table.field td {
+			padding: 0px;
+			border: 1px solid black;
+			}
+			
+			table.token {
+			border-collapse: separate;
+			border-spacing: 0px;
+			}
+			
+			.cell {
+			width:20px;
+			height:20px;
+			}
+			
+			.cellPix {
+			width:2px;
+			height:2px;
+			float: left;
+			}
+			
+			.fieldCell {
+			background-color: green; 
+			}
+			
+			
+			.info {
+				width:250px;
+				background-color: gray;
+			}
+			
+			.bggreen {background-color: green;}
+			.bgyellow {background-color: yellow;}
+			.bgred {background-color: red;}
+			.bggray {background-color: gray;}
+		</style>
+		<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
+		<script type="text/javascript" src="js/colorpicker.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				var tr = "<tr/>";
+				var td = "<td/>";
+				var cell = "<div class='cell'></div>";
+				//var nbr = 3*12;
+				/// Creation du battle field
+				var field = new BattleField(5 , 5);
+				$("#fieldtab1").append(field.GetField());
+				
+				$("#SaveField").click(function() {
+					$("#SaveTextArea").val(JSON.stringify(field));
+				});
+				//$('table[name="field"] .cell').addClass("fieldCell");
+				/////////////////////////////
+				// token
+				var t = new Token(20,20);
+				$("#tokens").append(t.GetToken());
+				
+				
+				//////////////////////////////////////
+				//tabs
+				$( "#tabs" ).tabs();
+				$( "#tabs" ).bind( "tabsshow", function(event, ui) {
+					tokenList
+					switch(ui.index) {
+						case 1 :
+							field.SetEditor(true);
+							$("#fieldtab2").append($("#fieldtab1 table"));
+							break;
+						case 0:
+							$("#fieldtab1").append($("#fieldtab2 table"));
+							break;
+					}
+					
+					if (ui.index != 1) {
+						field.SetEditor(false);
+						field.SetEditorMode(false);
+					}
+					
+						
+				});
+				// Colorpicker
+				$('#colorpicker').ColorPicker({flat: true ,
+									onSubmit: function(hsb, hex, rgb, el) {
+										field.SetEditorColor('#' + hex);
+									}
+				});
+				
+				//pinceau
+				$("#pinceau1").click(function(){field.SetPen(1)});
+				$("#pinceau2").click(function(){field.SetPen(2)});
+				$("#pinceau3").click(function(){field.SetPen(3)});
+				$("#pinceau4").click(function(){field.SetPen(4)});
+				$("#pinceau5").click(function(){field.SetPen(5)});
+				$("#pinceau6").click(function(){field.SetPen(6)});
+				$("#pinceau7").click(function(){field.SetPen(7)});
+				$("#pinceau8").click(function(){field.SetPen(8)});
+				$("#pinceau9").click(function(){field.SetPen(9)});
+				$("#pinceau10").click(function(){field.SetPen(10)});
+				
+			});
+			
+			///////////////////////////////////////
+			/// BattleField
+			function BattleField(w, h)
+			{
+				var isEditor = false;
+				var editorColor = "#FFFFFF";
+				var isEditorMode = false;
+				var table = $("<table class='field'></table>");
+				var width = w;
+				var height = h;
+				var penPix = 1;
+				this.Constructor = function(w, h) {
+					var tr = "<tr/>";
+					var td = "<td/>";
+					var cell = "<div class='cell'></div>";
+					var cellPix = "<div class='cellPix'></div>";
+					
+					for(i=0; i < h; i++)
+					{
+						table.append(tr);
+					}
+					for(i=0; i < w; i++)
+					{
+						table.find('tr').append(td);
+					}
+					
+					table.find('tr td').each(function(index) {
+						var fieldCell = $(cell);
+						for(i=0; i < 10; i++)
+						{
+							for(j=0; j < 10; j++)
+							{
+								var c = $(cellPix);
+								var x = (index%width) * 10 + j;
+								var y = Math.floor(index/width) * 10 + i;
+								c.data("x", x);
+								c.data("y", y);
+								c.attr('id', 'cell_' + x + '_' + y);
+								c.css("background-color", "green");;
+								fieldCell.append(c);
+							}
+						}
+						$(this).append(fieldCell);
+					});
+					
+					table.find('.cellPix').bind('mouseover', OnMouseOver);
+					table.find('.cellPix').bind('click', OnClick);
+				};
+				
+				this.SetEditor = function(bool)
+				{
+					isEditor = bool;
+				}
+				
+				this.GetEditor = function(bool)
+				{
+					return isEditor;
+				}
+				
+				this.SetEditorColor = function(scolor)
+				{
+					editorColor = scolor;
+				}
+				
+				var OnClick = function () {
+					if (isEditor)
+						isEditorMode = !isEditorMode;
+					
+					if (isEditorMode) {
+						table.find("td").css("border", "1px solid red");
+					}
+					else {
+						table.find("td").css("border", "1px solid black");
+					}
+				}
+				
+				var OnMouseOver = function () {
+					if (isEditorMode)
+					{	
+						var x = $(this).data("x");
+						var y = $(this).data("y");
+						var total;
+						var diff = Math.ceil(penPix / 2)
+						x -= diff;
+						y -= diff;
+						for(i=0; i<penPix; i++)
+						{
+							for(j=0; j<penPix; j++)
+							{
+								table.find("#cell_" + (x+i) + "_" + (y+j)).css("background-color", editorColor);
+							}
+						}
+					}
+				}
+				
+				this.GetField = function() {
+					return table;
+				}
+				
+				this.SetPen = function(pix) {
+					penPix = pix;
+				}
+				this.Constructor(width, height);
+			}
+			
+			///////////////////////////////////////
+			/// Token
+			function Token(width, height)
+			{
+				var token = $("<div class='cell'>&nbsp;</div>");
+				var info = $("<div class='info'></div>");
+				
+				this.Constructor = function (w, h) {
+					token.addClass('bggray');
+					token.draggable({snap : ".cell", snapMode : "inner"});
+					token.mouseover(function() {
+						if (!$(this).hasClass( "ui-draggable-dragging" )) {
+							var offset = $(this).offset();
+							info.show();
+							info.offset({ top: offset.top, left: offset.left + 25});
+						}
+					});
+					
+					token.mouseout(function() {
+						info.hide();
+					});
+					
+					token.mousedown(function() {
+						info.hide();
+					});
+					
+					makeInfo();
+					
+				}
+				
+				var makeInfo = function() {
+					info.append("<input type='text' size='40' style='bold;'></input>");
+					info.append("<textarea rows='10' cols='30'></textarea>");
+					$("#tokenList").append(info);
+				}
+				
+				this.GetToken = function () {
+					return token;
+				}
+				this.Constructor(width, height);
+			}
+		</script>
+	</head>
+	<body>
+		<div id="tabs">
+			<ul>
+				<li><a href="#tabs-1">Battleground</a></li>
+				<li><a href="#tabs-2">Configure</a></li>
+				<li><a href="#tabs-3">Token List</a></li>
+				<li><a href="#tabs-4">Save</a></li>
+			</ul>
+			<div id="tabs-1">
+				<div id="fieldtab1">
+					
 				</div>
-
-				<p>Attached to an text field and using callback functions to update the color with field's value and set the value back in the field by submiting the color.</p>
-				<p><input type="text" maxlength="6" size="6" id="colorpickerField1" value="00ff00" /></p>
-				<p><input type="text" maxlength="6" size="6" id="colorpickerField3" value="0000ff" /></p>
-				<p><input type="text" maxlength="6" size="6" id="colorpickerField2" value="ff0000" /></p>
-				<pre>$('#colorpickerField1, #colorpickerField2, #colorpickerField3').ColorPicker({
-	onSubmit: function(hsb, hex, rgb, el) {
-		$(el).val(hex);
-		$(el).ColorPickerHide();
-	},
-	onBeforeShow: function () {
-		$(this).ColorPickerSetColor(this.value);
-	}
-})
-.bind('keyup', function(){
-	$(this).ColorPickerSetColor(this.value);
-});
-</pre>
-				<p>Attached to DOMElement and using callbacks to live preview the color and adding animation.</p>
-				<p>
-					<div id="colorSelector"><div style="background-color: #0000ff"></div></div>
-				</p>
-				<pre>
-$('#colorSelector').ColorPicker({
-	color: '#0000ff',
-	onShow: function (colpkr) {
-		$(colpkr).fadeIn(500);
-		return false;
-	},
-	onHide: function (colpkr) {
-		$(colpkr).fadeOut(500);
-		return false;
-	},
-	onChange: function (hsb, hex, rgb) {
-		$('#colorSelector div').css('backgroundColor', '#' + hex);
-	}
-});
-</pre>
-            </div>
-            <div class="tab">
-                <h2>Download</h2>
-                <p><a href="colorpicker.zip">colorpicker.zip (73 kb)</a>: jQuery, Javscript files, CSS files, images, examples and instructions.</p>
-                <h3>Changelog</h3>
-                <dl>
-					<dt>23.05.2009</dt>
-					<dd>Added: close on color selection example</dd>
-					<dd>Added: restore original color option</dd>
-					<dd>Changed: color update on key up event</dd>
-					<dd>Fixed: colorpicker hide and show methods</dd>
-					<dd>Fixed: reference to options. Multiple fields with colorpickers is possible now.</dd>
-					<dd>Fixed: RGB to HSB convertion</dd>
-					<dt>22.08.2008</dt>
-					<dd>Fixed bug: where some events were not canceled right on Safari</dd>
-					<dd>Fixed bug: where teh view port was not detected right on Safari</dd>
-					<dt>16-07-2008</dt>
-					<dd>Fixed bug where the letter 'F' could not be typed in the Hex field</dd>
-					<dd>Fixed bug where the changes on Hex field where not parsed</dd>
-					<dd>Added new option 'livePreview'</dd>
-					<dt>08-07-2008</dt>
-					<dd>Fixed typo in the code, both JavaScript and CSS</dd>
-					<dd>Changed the cursor for some elements</dd>
-					<dd>Added new demo explaining how to implement custom skin</dd>
-					<dt>07.07.2008</dt>
-					<dd>The first release.</dd>
-                </dl>
-            </div>
-            <div class="tab">
-                <h2>Implement</h2>
-                <p>Attach the Javascript and CSS files to your document. Edit CSS file and fix the paths to  images and change colors to fit your site theme.</p>
-                <pre>
-&lt;link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" /&gt;
-&lt;script type="text/javascript" src="js/colorpicker.js"&gt;&lt;/script&gt;
-                </pre>
-                <h3>Invocation code</h3>
-                <p>All you have to do is to select the elements in a jQuery way and call the plugin.</p>
-                <pre>
- $('input').ColorPicker(options);
-                </pre>
-                <h3>Options</h3>
-                <p>A hash of parameters. All parameters are optional.</p>
-                <table>
-                	<tr>
-                		<td><strong>eventName</strong></td>
-                		<td>string</td>
-                		<td>The desired event to trigger the colorpicker. Default: 'click'</td>
-                	</tr>
-                	<tr>
-                		<td><strong>color</strong></td>
-                		<td>string or hash</td>
-                		<td>The default color. String for hex color or hash for RGB and HSB ({r:255, r:0, b:0}) . Default: 'ff0000'</td>
-                	</tr>
-                	<tr>
-                		<td><strong>flat</strong></td>
-                		<td>boolean</td>
-                		<td>Whatever if the color picker is appended to the element or triggered by an event. Default false</td>
-                	</tr>
-                	<tr>
-                		<td><strong>livePreview</strong></td>
-                		<td>boolean</td>
-                		<td>Whatever if the color values are filled in the fields while changing values on selector or a field. If false it may improve speed. Default true</td>
-                	</tr>
-                	<tr>
-                		<td><strong>onShow</strong></td>
-                		<td>function</td>
-                		<td>Callback function triggered when the color picker is shown</td>
-                	</tr>
-                	<tr>
-                		<td><strong>onBeforeShow</strong></td>
-                		<td>function</td>
-                		<td>Callback function triggered before the color picker is shown</td>
-                	</tr>
-                	<tr>
-                		<td><strong>onHide</strong></td>
-                		<td>function</td>
-                		<td>Callback function triggered when the color picker is hidden</td>
-                	</tr>
-                	<tr>
-                		<td><strong>onChange</strong></td>
-                		<td>function</td>
-                		<td>Callback function triggered when the color is changed</td>
-                	</tr>
-                	<tr>
-                		<td><strong>onSubmit</strong></td>
-                		<td>function</td>
-                		<td>Callback function triggered when the color it is chosen</td>
-                	</tr>
-                </table>
-                <h3>Set color</h3>
-                <p>If you want to set a new color.</p>
-                <pre>$('input').ColorPickerSetColor(color);</pre>
-				<p>The 'color' argument is the same format as the option color, string for hex color or hash for RGB and HSB ({r:255, r:0, b:0}).</p>
-            </div>
-        </div>
-    </div>
-</body>
+				
+				<div id="tokens">
+					
+				</div>
+				
+			</div>
+			<div id="tabs-2">
+				<div id="fieldtab2">
+					
+				</div>
+				<input type="radio" id="pinceau1" name="pinceau">1 pix</input>
+				<input type="radio" id="pinceau2" name="pinceau">2 pix</input>
+				<input type="radio" id="pinceau3" name="pinceau">3 pix</input>
+				<input type="radio" id="pinceau4" name="pinceau">4 pix</input>
+				<input type="radio" id="pinceau5" name="pinceau">5 pix</input>
+				<input type="radio" id="pinceau6" name="pinceau">6 pix</input>
+				<input type="radio" id="pinceau7" name="pinceau">7 pix</input>
+				<input type="radio" id="pinceau8" name="pinceau">8 pix</input>
+				<input type="radio" id="pinceau9" name="pinceau">9 pix</input>
+				<input type="radio" id="pinceau10" name="pinceau">10 pix</input>
+				<p id="colorpicker"></p>
+			</div>
+			<div id="tabs-3">
+				<div id="tokenList"></div>
+			</div>
+			<div id="tabs-4">
+				<button type="button" id="SaveField">Save Field</button>
+				<input type="textarea" id="SaveTextArea"></input>
+				<script type="text/javascript">
+					$(function(){
+						
+					});
+				</script>
+				<p>Tab 3</p>
+			</div>
+		</div>
+	</body>
 </html>
