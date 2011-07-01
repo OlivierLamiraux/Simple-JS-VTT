@@ -89,6 +89,13 @@
 									}
 				});
 				
+				//pinceau
+				$("#pinceau1").click(function(){field.SetPen(1)});
+				$("#pinceau2").click(function(){field.SetPen(2)});
+				$("#pinceau3").click(function(){field.SetPen(3)});
+				$("#pinceau4").click(function(){field.SetPen(4)});
+				$("#pinceau4").click(function(){field.SetPen(5)});
+				
 			});
 			
 			function BattleField(w, h)
@@ -99,6 +106,7 @@
 				var table = $("<table class='field'></table>");
 				var width = w;
 				var height = h;
+				var penPix = 1;
 				this.Constructor = function(w, h) {
 					var tr = "<tr/>";
 					var td = "<td/>";
@@ -169,15 +177,33 @@
 					{	
 						var x = $(this).data("x");
 						var y = $(this).data("y");
-						$(this).css("background-color", editorColor);
-						table.find("#cell_" + (x+1) + "_" + y).css("background-color", editorColor);;
-						table.find("#cell_" + (x+1) + "_" + (y+1)).css("background-color", editorColor);;
-						table.find("#cell_" + x + "_" + (y+1)).css("background-color", editorColor);;
+						var total;
+						switch (penPix) {
+							case 5:
+								x -= 1;
+								y -= 1;
+							case 4:
+							case 3:
+								x -= 1;
+								y -= 1;
+								break;
+						}
+						for(i=0; i<penPix; i++)
+						{
+							for(j=0; j<penPix; j++)
+							{
+								table.find("#cell_" + (x+i) + "_" + (y+j)).css("background-color", editorColor);
+							}
+						}
 					}
 				}
 				
 				this.GetField = function() {
 					return table;
+				}
+				
+				this.SetPen = function(pix) {
+					penPix = pix;
 				}
 				this.Constructor(width, height);
 			}
@@ -239,6 +265,11 @@
 				<div id="fieldtab2">
 					
 				</div>
+				<input type="radio" id="pinceau1" name="pinceau">1 pix</input>
+				<input type="radio" id="pinceau2" name="pinceau">2 pix</input>
+				<input type="radio" id="pinceau3" name="pinceau">3 pix</input>
+				<input type="radio" id="pinceau4" name="pinceau">4 pix</input>
+				<input type="radio" id="pinceau5" name="pinceau">5 pix</input>
 				<p id="colorpicker"></p>
 			</div>
 			<div id="tabs-3">
