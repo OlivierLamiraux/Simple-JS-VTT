@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		<title>jQuery UI Example Page</title>
+		<title>Javascript Virtual TableTop</title>
 		<link type="text/css" href="css/smoothness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
 		<link rel="stylesheet" href="css/colorpicker.css" type="text/css" />		
 		<style type="text/css">
@@ -39,7 +39,7 @@
 			
 			
 			.info {
-				width:250px;
+				width:400px;
 				background-color: gray;
 			}
 			
@@ -52,31 +52,44 @@
 		<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>
 		<script type="text/javascript" src="js/colorpicker.js"></script>
 		<script type="text/javascript">
+			var Global = new function(){
+				this.tokenList = new Array();
+			};
+			
 			$(function(){
-				var tr = "<tr/>";
-				var td = "<td/>";
-				var cell = "<div class='cell'></div>";
-				//var nbr = 3*12;
 				/// Creation du battle field
 				var field = new BattleField(5 , 5);
 				$("#fieldtab1").append(field.GetField());
 				
+				// TODO
 				$("#SaveField").click(function() {
 					$("#SaveTextArea").val(JSON.stringify(field));
 				});
-				//$('table[name="field"] .cell').addClass("fieldCell");
+
 				/////////////////////////////
-				// token
-				var t = new Token(20,20);
-				$("#tokens").append(t.GetToken());
+				// token (creation de 10 token)
+				for (i=0; i<10; i++)
+				{
+					var t = new Token(20,20);
+					$("#tokens").append(t.GetToken());
+					Global.tokenList.push(t);
+				}
 				
 				
 				//////////////////////////////////////
 				//tabs
 				$( "#tabs" ).tabs();
 				$( "#tabs" ).bind( "tabsshow", function(event, ui) {
-					tokenList
 					switch(ui.index) {
+						case 2:
+							for(i=0; i < Global.tokenList.length; i++)
+							{
+								var info = Global.tokenList[i].GetInfo();
+								info.show();
+								info.removeAttr('style');
+								$("#tokenList").append(info);
+							}
+							break;
 						case 1 :
 							field.SetEditor(true);
 							$("#fieldtab2").append($("#fieldtab1 table"));
@@ -88,11 +101,11 @@
 					
 					if (ui.index != 1) {
 						field.SetEditor(false);
-						field.SetEditorMode(false);
 					}
 					
 						
 				});
+				
 				// Colorpicker
 				$('#colorpicker').ColorPicker({flat: true ,
 									onSubmit: function(hsb, hex, rgb, el) {
@@ -232,6 +245,7 @@
 					token.mouseover(function() {
 						if (!$(this).hasClass( "ui-draggable-dragging" )) {
 							var offset = $(this).offset();
+							token.append(info);
 							info.show();
 							info.offset({ top: offset.top, left: offset.left + 25});
 						}
@@ -252,14 +266,21 @@
 				var makeInfo = function() {
 					info.append("<input type='text' size='40' style='bold;'></input>");
 					info.append("<textarea rows='10' cols='30'></textarea>");
-					$("#tokenList").append(info);
+					token.append(info);
+					info.hide();
 				}
 				
 				this.GetToken = function () {
 					return token;
 				}
+				
+				this.GetInfo = function () {
+					return info;
+				}
 				this.Constructor(width, height);
 			}
+			
+			
 		</script>
 	</head>
 	<body>
